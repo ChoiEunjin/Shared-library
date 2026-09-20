@@ -36,12 +36,15 @@ def call() {
                 }
                 steps{
                     withSonarQubeEnv(credentialsId:"sonar_token",installationName:'sonar') {
-                            //sh "${scannerHome}/bin/sonar-scanner"
-                        sh "${scannerHome}/bin/sonar-scanner \
-                                        -Dsonar.projectKey=${env.REPO_NAME} \
-                                        -Dsonar.java.binaries=. \
-                                        -Dsonar.projectBaseDir=${WORKSPACE}"
+                        sh """
+                        ${scannerHome}/bin/sonar-scanner \
+                        -Dsonar.projectKey=${env.REPO_NAME} \
+                        -Dsonar.java.binaries=. \
+                        -Dsonar.projectBaseDir=${env.WORKSPACE}
+                        """
                     }
+
+                    
                     
                 }
             }
