@@ -31,22 +31,15 @@ def call() {
             }
 
             stage('SonarQube Analysis') {
-                environment{
+                environment {
                     scannerHome = tool 'sonar'
                 }
-                steps{
-                    withSonarQubeEnv(credentialsId:"sonar_token",installationName:'sonar') {
-                        sh """
-                        ${scannerHome}/bin/sonar-scanner \
-                        -Dsonar.projectKey=${env.REPO_NAME} \
-                        -Dsonar.java.binaries=. \
-                        -Dsonar.projectBaseDir=${env.WORKSPACE}
-                        """
+                steps {
+                    withSonarQubeEnv(credentialsId: 'sonar_token', installationName: 'sonar') {
+                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${env.REPO_NAME} -Dsonar.java.binaries=. -Dsonar.projectBaseDir=${env.WORKSPACE}"
                     }
-
-                    
-                    
                 }
+            }
             }
         }
     }
