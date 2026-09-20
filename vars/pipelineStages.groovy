@@ -6,7 +6,7 @@ def call() {
             REPO_NAME = getRepoName()
         }
 
-        stages{
+        stages {
             stage('Checkout') {
                 steps {
                     checkout scm
@@ -26,7 +26,7 @@ def call() {
                 steps {
                     echo 'Deploying...'
                     // 배포 명령어 추가
-                    //sh './deploy.sh'
+                    // sh './deploy.sh'
                 }
             }
 
@@ -35,8 +35,10 @@ def call() {
                     scannerHome = tool 'sonar'
                 }
                 steps {
-                    withSonarQubeEnv(credentialsId: 'sonar_token', installationName: 'sonar') {
-                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=${env.REPO_NAME} -Dsonar.java.binaries=. -Dsonar.projectBaseDir=${env.WORKSPACE}"
+                    script {
+                        withSonarQubeEnv(credentialsId: 'sonar_token', installationName: 'sonar') {
+                            sh "'''${scannerHome}/bin/sonar-scanner''' -Dsonar.projectKey=${REPO_NAME} -Dsonar.java.binaries=. -Dsonar.projectBaseDir=${WORKSPACE}"
+                        }
                     }
                 }
             }
