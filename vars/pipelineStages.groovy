@@ -30,19 +30,22 @@ def call() {
                 }
             }
 
-stage('SonarQube Analysis') {
-    environment {
-        scannerHome = tool 'sonar'
-    }
-    steps {
-        script {
-            withSonarQubeEnv(credentialsId: 'sonar_token', installationName: 'sonar') {
-                def scannerExec = "${scannerHome}/bin/sonar-scanner"
-                sh "'${scannerExec}' -Dsonar.projectKey=${env.REPO_NAME} -Dsonar.java.binaries=. -Dsonar.projectBaseDir='${env.WORKSPACE}' -Dsonar.exclusions='**/*.js,**/*.ts,**/*.css'"
+            stage('SonarQube Analysis') {
+                environment{
+                    scannerHome = tool 'sonar'
+                }
+                steps{
+                    withSonarQubeEnv(credentialsId:"sonar_token",installationName:'sonar') {
+                            //sh "${scannerHome}/bin/sonar-scanner"
+                        sh "${scannerHome}/bin/sonar-scanner \
+                                        -Dsonar.projectKey=${env.REPO_NAME} \
+                                        -Dsonar.java.binaries=. \
+                                        -Dsonar.projectBaseDir=${WORKSPACE}"
+                    }
+                    
+                }
             }
-        }
-    }
-}
+
         }
     }
 }
