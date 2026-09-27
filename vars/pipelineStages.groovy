@@ -6,7 +6,7 @@ def call() {
             REPO_NAME = getRepoName()
         }
 
-        stages {
+        stages{
             stage('Checkout') {
                 steps {
                     checkout scm
@@ -26,32 +26,24 @@ def call() {
                 steps {
                     echo 'Deploying...'
                     // 배포 명령어 추가
-                    // sh './deploy.sh'
+                    //sh './deploy.sh'
                 }
             }
 
-stage('SonarQube Analysis') {
-    environment {
-        scannerHome = tool 'sonar'
-    }
-    steps {
-        script {
-            withSonarQubeEnv(installationName: 'sonar', credentialsId: 'sonar_token') {
-                def scannerExec = "${scannerHome}/bin/sonar-scanner"
-                sh """
-                    '${scannerExec}' \
-                    -Dsonar.projectKey=${env.REPO_NAME} \
-                    -Dsonar.java.binaries=. \
-                    -Dsonar.projectBaseDir='${env.WORKSPACE}' \
-                    -Dsonar.exclusions='**/*.js,**/*.ts,**/*.css,**/*.html,**/*.htm' \
-                    -Dsonar.javascript.exclusions='**/*' \
-                    -Dsonar.typescript.exclusions='**/*'
-                """
-            }
-        }
-    }
-}
+            stage('SonarQube Analysis') {
+                steps{
+                    script{
+                        def URL = env.GIT_URL
+                        def BRANCH = env.GIT_BRANCH
 
+                        build job: 'security_job', parameters:[
+                            string(name: 'GIT_URL', value: URL),
+                            string(name: 'BRANCH', value: BRANCH),
+                            string(name: 'REPONAME', value: REPO_NAME)
+                        ]
+                    }
+                }
+            }
         }
     }
 }
